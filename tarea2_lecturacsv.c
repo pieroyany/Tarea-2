@@ -57,7 +57,6 @@ List* leer_canciones() {
   return lista_canciones;
 }
 
-
 void menuPrincipal() {
   limpiarPantalla();
   puts("========================================");
@@ -74,89 +73,65 @@ void menuPrincipal() {
   printf("6: Salir\n");
 }
 
-void buscar_por_genero(lista) {
+void buscar_por_genero() {
   char genero[100];
-  printf("Ingrese el género de la canción: ");
+  printf("Ingrese el genero de la cancion: ");
   scanf("%s", genero);
 }
 
-void buscar_por_artista(lista) {
+void buscar_por_artista() {
   char artista[100];
-  printf("Ingrese el artista de la canción: ");
+  printf("Ingrese el artista de la cancion: ");
   scanf("%s", artista);
 }
 
-void buscar_por_tempo(lista) {
+void buscar_por_tempo() {
   float tempo;
-  printf("Ingrese el tempo de la canción: ");
+  printf("Ingrese el tempo de la cancion: ");
   scanf("%f", &tempo);
 }
 
-void mostrar_Todas(List *lista) {
-  if (!lista || list_size(lista) == 0) {
-    printf("No hay canciones para mostrar.\n");
-    return;
+void salir(List *canciones) {
+  if (canciones != NULL) {
+      Cancion *c;
+      while ((c = list_popFront(canciones)) {
+          list_clean(c->artistas);
+          free(c->artistas);
+          free(c);
+      }
+      free(canciones);
   }
-
-  int count = 0;
-  char opcion;
-
-  for (cancion *c = list_first(lista); c != NULL; c = list_next(lista)) {
-    printf("ID: %s\n", c->id);
-    printf("Título: %s\n", c->titulo);
-    printf("Artistas:\n");
-    for (char *artista = list_first(c->artistas); artista != NULL; artista = list_next(c->artistas)) {
-      printf("  - %s\n", artista);
-    }
-    printf("Álbum: %s\n", c->album);
-    printf("Género: %s\n", c->genero);
-    printf("Tempo: %.2f\n", c->tempo);
-    printf("------------------------------------------------\n");
-
-    count++;
-    if (count % 10 == 0) {
-      printf("¿Deseas ver más canciones? (s/n): ");
-      scanf(" %c", &opcion);
-      if (opcion != 's' && opcion != 'S') break;
-    }
-  }
-}
-
-
-void salir() {
-  printf("Saliendo...\n");
+  printf("Saliendo del programa...\n");
   exit(0);
 }
 
 int main() {
   char opcion;
+  List* canciones = NULL;
   do {
     menuPrincipal();
     scanf(" %c", &opcion);
-    List* canciones = NULL;
 
     switch (opcion) {
       case '1':
       canciones = leer_canciones();
       break;
       case '2':
-        buscar_por_genero(canciones);
+        buscar_por_genero();
         break;
       case '3':
-        buscar_por_artista(canciones);
+        buscar_por_artista();
         break;
       case '4':
-        buscar_por_tempo(canciones);
+        buscar_por_tempo();
         break;
       case '5':
-        mostrarTodas(canciones);
+        salir(canciones);
         break;
-      case '6':
-        salir();
       default:
-        printf("Opción no válida. Intente de nuevo.\n");
+        printf("Opcion no valida. Intente de nuevo.\n");
     }
-  } while (opcion != '0');
+  } while (1);
 
   return 0;
 }
