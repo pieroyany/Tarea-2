@@ -58,41 +58,70 @@ List* leer_canciones() {
 }
 
 
-void menuprincipal() {
+void menuPrincipal() {
   limpiarPantalla();
   puts("========================================");
   puts("     Bienvenido A Spotifind");
   puts("========================================");
 
-  printf("Ingrese su opción: \n");
+  printf("Ingrese su opcion: \n");
 
   printf("1: Leer canciones\n");
-  printf("2: Buscar por género\n");
+  printf("2: Buscar por genero\n");
   printf("3: Buscar por artista\n");
   printf("4: Buscar por tempo\n");
-  printf("5: Salir\n");
+  printf("5: Mostrar todas las canciones\n");
+  printf("6: Salir\n");
 }
 
-void buscar_por_genero() {
+void buscar_por_genero(lista) {
   char genero[100];
   printf("Ingrese el género de la canción: ");
   scanf("%s", genero);
 }
 
-void buscar_por_artista() {
+void buscar_por_artista(lista) {
   char artista[100];
   printf("Ingrese el artista de la canción: ");
   scanf("%s", artista);
 }
 
-void buscar_por_tempo() {
+void buscar_por_tempo(lista) {
   float tempo;
   printf("Ingrese el tempo de la canción: ");
   scanf("%f", &tempo);
 }
 
-void mostrarTodas(){
+void mostrar_Todas(List *lista) {
+  if (!lista || list_size(lista) == 0) {
+    printf("No hay canciones para mostrar.\n");
+    return;
+  }
+
+  int count = 0;
+  char opcion;
+
+  for (cancion *c = list_first(lista); c != NULL; c = list_next(lista)) {
+    printf("ID: %s\n", c->id);
+    printf("Título: %s\n", c->titulo);
+    printf("Artistas:\n");
+    for (char *artista = list_first(c->artistas); artista != NULL; artista = list_next(c->artistas)) {
+      printf("  - %s\n", artista);
+    }
+    printf("Álbum: %s\n", c->album);
+    printf("Género: %s\n", c->genero);
+    printf("Tempo: %.2f\n", c->tempo);
+    printf("------------------------------------------------\n");
+
+    count++;
+    if (count % 10 == 0) {
+      printf("¿Deseas ver más canciones? (s/n): ");
+      scanf(" %c", &opcion);
+      if (opcion != 's' && opcion != 'S') break;
+    }
+  }
 }
+
 
 void salir() {
   printf("Saliendo...\n");
@@ -102,7 +131,7 @@ void salir() {
 int main() {
   char opcion;
   do {
-    menuprincipal();
+    menuPrincipal();
     scanf(" %c", &opcion);
     List* canciones = NULL;
 
