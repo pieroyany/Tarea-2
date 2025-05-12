@@ -74,15 +74,15 @@ void menuPrincipal() {
 
 void mostrar_cancion(cancion *c) {
   printf("\nID: %s", c->id);
-  printf("\nTítulo: %s", c->titulo);
+  printf("\nTitulo: %s", c->titulo);
   printf("\nArtistas: ");
   for (char *art = list_first(c->artistas); art != NULL; art = list_next(c->artistas)) {
       printf("%s ", art);
   }
-  printf("\nÁlbum: %s", c->album);
-  printf("\nGénero: %s", c->genero);
+  printf("\nalbum: %s", c->album);
+  printf("\nGenero: %s", c->genero);
   printf("\nTempo: %.2f BPM", c->tempo);
-  printf("\n----------------------------------------\n");
+  printf("\n----------------------------------------");
 }
 
 void buscar_por_genero(List *lista) {
@@ -139,10 +139,32 @@ void buscar_por_genero(List *lista) {
     presioneTeclaParaContinuar();
 }
 
-void buscar_por_artista() {
+void buscar_por_artista(List *lista) {
+  limpiarPantalla();
   char artista[100];
-  printf("Ingrese el artista de la cancion: ");
-  scanf("%s", artista);
+  printf("Ingrese el artista a buscar: ");
+  scanf(" %[^\n]", artista);
+
+  int encontradas = 0;
+  cancion *c = list_first(lista);
+  while (c != NULL) {
+      List *artistas = c->artistas;
+      char *art = list_first(artistas);
+      while (art != NULL) {
+          if (strcasecmp(art, artista) == 0) {
+              mostrar_cancion(c);
+              encontradas++;
+              break;
+          }
+          art = list_next(artistas);
+      }
+      c = list_next(lista);
+  }
+
+  if (!encontradas) {
+      printf("\nNo se encontraron canciones del artista '%s'\n", artista);
+  }
+  presioneTeclaParaContinuar();
 }
 
 void buscar_por_tempo() {
@@ -180,7 +202,7 @@ int main() {
         buscar_por_genero(canciones);
         break;
       case '3':
-        buscar_por_artista();
+        buscar_por_artista(canciones);
         break;
       case '4':
         buscar_por_tempo();
