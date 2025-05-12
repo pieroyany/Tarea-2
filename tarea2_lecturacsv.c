@@ -32,9 +32,6 @@ List* leer_canciones() {
 
   int k = 0;
   while ((campos = leer_linea_csv(archivo, ',')) != NULL) {
-    k++;
-    if (k > 1000) break;
-
     cancion* nueva = (cancion*) malloc(sizeof(cancion));
     if (!nueva) {
       perror("Error al asignar memoria");
@@ -50,10 +47,12 @@ List* leer_canciones() {
     nueva->tempo = atof(campos[18]);
 
     list_pushBack(lista_canciones, nueva);
+    k++;
   }
 
   fclose(archivo);
   printf("%d canciones cargadas correctamente.\n", k);
+  presioneTeclaParaContinuar();
   return lista_canciones;
 }
 
@@ -69,8 +68,7 @@ void menuPrincipal() {
   printf("2: Buscar por genero\n");
   printf("3: Buscar por artista\n");
   printf("4: Buscar por tempo\n");
-  printf("5: Mostrar todas las canciones\n");
-  printf("6: Salir\n");
+  printf("5: Salir\n");
 }
 
 void buscar_por_genero() {
@@ -93,8 +91,8 @@ void buscar_por_tempo() {
 
 void salir(List *canciones) {
   if (canciones != NULL) {
-      Cancion *c;
-      while ((c = list_popFront(canciones)) {
+      cancion *c;
+      while (c = list_popFront(canciones)) {
           list_clean(c->artistas);
           free(c->artistas);
           free(c);
@@ -131,6 +129,7 @@ int main() {
       default:
         printf("Opcion no valida. Intente de nuevo.\n");
     }
+    presioneTeclaParaContinuar();
   } while (1);
 
   return 0;
