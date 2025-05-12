@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 typedef struct {
   char id[100];
@@ -84,10 +85,58 @@ void mostrar_cancion(cancion *c) {
   printf("\n----------------------------------------\n");
 }
 
-void buscar_por_genero() {
+void buscar_por_genero(List *lista) {
+  limpiarPantalla();
+  if (lista == NULL || list_size(lista) == 0) {
+    printf("\nNo hay canciones cargadas. Primero cargue las canciones.\n");
+    presioneTeclaParaContinuar();
+    return;
+  }
+
   char genero[100];
-  printf("Ingrese el genero de la cancion: ");
-  scanf("%s", genero);
+  printf("\nIngrese el genero a buscar: ");
+  scanf(" %[^\n]", genero);
+
+  int encontradas = 0;
+  int contador = 0;
+  char opcion;
+    
+  cancion *c = list_first(lista);
+  while (c != NULL) {
+    char genero_cancion[300];
+    char genero_busqueda[100];
+    strcpy(genero_cancion, c->genero);
+    strcpy(genero_busqueda, genero);
+        
+    for(int i = 0; genero_cancion[i]; i++) genero_cancion[i] = tolower(genero_cancion[i]);
+    for(int i = 0; genero_busqueda[i]; i++) genero_busqueda[i] = tolower(genero_busqueda[i]);
+        
+    if (strstr(genero_cancion, genero_busqueda) != NULL) {
+      mostrar_cancion(c);
+      encontradas++;
+      contador++;
+
+      // Pausa cada 5 canciones
+      if (contador % 5 == 0) {
+        printf("\nPresione 's' para ver mas resultados o cualquier tecla para volver al menu...");
+        scanf(" %c", &opcion);
+        if (tolower(opcion) != 's') {
+          break;
+        }
+        limpiarPantalla();
+        printf("Resultados para genero: %s (continuacion)\n", genero);
+        puts("========================================");
+        }
+    }
+    c = list_next(lista);
+    }
+
+    if (encontradas == 0) {
+      printf("\nNo se encontraron canciones del genero '%s'\n", genero);
+    } else {
+      printf("\nTotal encontradas: %d\n", encontradas);
+    }
+    presioneTeclaParaContinuar();
 }
 
 void buscar_por_artista() {
@@ -128,7 +177,7 @@ int main() {
       canciones = leer_canciones();
       break;
       case '2':
-        buscar_por_genero();
+        buscar_por_genero(canciones);
         break;
       case '3':
         buscar_por_artista();
@@ -141,8 +190,8 @@ int main() {
         break;
       default:
         printf("Opcion no valida. Intente de nuevo.\n");
+        presioneTeclaParaContinuar();
     }
-    presioneTeclaParaContinuar();
   } while (1);
 
   return 0;
