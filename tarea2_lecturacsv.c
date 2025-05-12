@@ -140,32 +140,66 @@ void buscar_por_genero(List *lista) {
 }
 
 void buscar_por_artista(List *lista) {
-  limpiarPantalla();
+  if (lista == NULL || list_size(lista) == 0) {
+    printf("\nNo hay canciones cargadas. Primero cargue las canciones.\n");
+    presioneTeclaParaContinuar();
+    return;
+  }
+
   char artista[100];
-  printf("Ingrese el artista a buscar: ");
+  printf("\nIngrese el artista a buscar: ");
   scanf(" %[^\n]", artista);
 
+  limpiarPantalla();
+  printf("Resultados para artista: %s\n", artista);
+  puts("========================================");
+
   int encontradas = 0;
+  int contador = 0;
+  char opcion;
+
   cancion *c = list_first(lista);
   while (c != NULL) {
-      List *artistas = c->artistas;
-      char *art = list_first(artistas);
-      while (art != NULL) {
-          if (strcasecmp(art, artista) == 0) {
-              mostrar_cancion(c);
-              encontradas++;
-              break;
+    char *art = list_first(c->artistas);
+    while (art != NULL) {
+      char art_lower[100];
+      char artista_lower[100];
+      strcpy(art_lower, art);
+      strcpy(artista_lower, artista);
+      for(int i = 0; art_lower[i]; i++) art_lower[i] = tolower(art_lower[i]);
+      for(int i = 0; artista_lower[i]; i++) artista_lower[i] = tolower(artista_lower[i]);
+        
+      if (strstr(art_lower, artista_lower) != NULL) {
+        mostrar_cancion(c);
+        encontradas++;
+        contador++;
+
+        // Pausa cada 5 canciones
+        if (contador % 5 == 0) {
+          printf("\nPresione 's' para ver más resultados o cualquier tecla para volver al menú...");
+          scanf(" %c", &opcion);
+          if (tolower((unsigned char)opcion) != 's') {
+            presioneTeclaParaContinuar();
+            return;
           }
-          art = list_next(artistas);
+          limpiarPantalla();
+          printf("Resultados para artista: %s (continuación)\n", artista);
+          puts("========================================");
+        }
+        break; // Salir del bucle de artistas si ya encontramos coincidencia
       }
-      c = list_next(lista);
+      art = list_next(c->artistas);
+    }
+    c = list_next(lista);
   }
 
-  if (!encontradas) {
-      printf("\nNo se encontraron canciones del artista '%s'\n", artista);
+  if (encontradas == 0) {
+    printf("\nNo se encontraron canciones del artista '%s'\n", artista);
+  } else {
+    printf("\nTotal encontradas: %d\n", encontradas);
   }
   presioneTeclaParaContinuar();
-}
+  }
 
 void buscar_por_tempo(List *lista) {
   if (lista == NULL || list_size(lista) == 0) {
