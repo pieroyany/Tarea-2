@@ -167,10 +167,84 @@ void buscar_por_artista(List *lista) {
   presioneTeclaParaContinuar();
 }
 
-void buscar_por_tempo() {
-  float tempo;
-  printf("Ingrese el tempo de la cancion: ");
-  scanf("%f", &tempo);
+void buscar_por_tempo(List *lista) {
+  if (lista == NULL || list_size(lista) == 0) {
+    printf("\nNo hay canciones cargadas. Primero cargue las canciones.\n");
+    presioneTeclaParaContinuar();
+    return;
+}
+
+  puts("\nSeleccione categoria de tempo:");
+  puts("1. Lentas (<80 BPM)");
+  puts("2. Moderadas (80-120 BPM)");
+  puts("3. Rápidas (>120 BPM)");
+  printf("Opcion: ");
+
+  int opcion_tempo;
+  scanf("%d", &opcion_tempo);
+  float min, max;
+  char *categoria;
+
+  switch (opcion_tempo) {
+    case 1:
+        min = 0;
+        max = 80;
+        categoria = "Lentas";
+        break;
+    case 2:
+        min = 80;
+        max = 120;
+        categoria = "Moderadas";
+        break;
+    case 3:
+        min = 120;
+        max = 1000; // Valor alto para incluir todos los tempos mayores
+        categoria = "Rapidas";
+        break;
+    default:
+        printf("Opción invalida\n");
+        presioneTeclaParaContinuar();
+        return;
+}
+
+  limpiarPantalla();
+  printf("Resultados para tempo %s (%d-%d BPM)\n", categoria, (int)min, (int)max);
+  puts("========================================");
+
+  int encontradas = 0;
+  int contador = 0;
+  char opcion;
+
+  cancion *c = list_first(lista);
+  while (c != NULL) {
+    if (c->tempo > min && c->tempo <= max) {
+      mostrar_cancion(c);
+      encontradas++;
+      contador++;
+
+      // Pausa cada 5 canciones
+      if (contador % 5 == 0) {
+        printf("\nPresione 's' para ver mas resultados o cualquier tecla para volver al menu...");
+        scanf(" %c", &opcion);
+        if (tolower((unsigned char)opcion) != 's') {
+          presioneTeclaParaContinuar();
+          return;
+        }
+        limpiarPantalla();
+        printf("Resultados para tempo %s (%d-%d BPM) (continuacion)\n", categoria, (int)min, (int)max);
+        puts("========================================");
+      }
+    }
+  c = list_next(lista);
+}
+
+if (encontradas == 0) {
+    printf("\nNo se encontraron canciones en el rango de tempo seleccionado\n");
+} else {
+    printf("\nTotal encontradas: %d\n", encontradas);
+}
+
+presioneTeclaParaContinuar();
 }
 
 void salir(List *canciones) {
@@ -205,7 +279,7 @@ int main() {
         buscar_por_artista(canciones);
         break;
       case '4':
-        buscar_por_tempo();
+        buscar_por_tempo(canciones);
         break;
       case '5':
         salir(canciones);
