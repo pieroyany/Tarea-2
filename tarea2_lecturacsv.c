@@ -71,6 +71,19 @@ void menuPrincipal() {
   printf("5: Salir\n");
 }
 
+void mostrar_cancion(cancion *c) {
+  printf("\nID: %s", c->id);
+  printf("\nTítulo: %s", c->titulo);
+  printf("\nArtistas: ");
+  for (char *art = list_first(c->artistas); art != NULL; art = list_next(c->artistas)) {
+      printf("%s ", art);
+  }
+  printf("\nÁlbum: %s", c->album);
+  printf("\nGénero: %s", c->genero);
+  printf("\nTempo: %.2f BPM", c->tempo);
+  printf("\n----------------------------------------\n");
+}
+
 void buscar_por_genero() {
   char genero[100];
   printf("Ingrese el genero de la cancion: ");
