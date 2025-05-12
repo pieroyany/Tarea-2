@@ -25,7 +25,7 @@ List* leer_canciones() {
     return NULL;
   }
 
-  List* lista_canciones = list_create();
+  List* lista_canciones = list_create(); // Crear la lista para almacenar las canciones
   char **campos;
 
   // Leer encabezado
@@ -39,15 +39,16 @@ List* leer_canciones() {
       fclose(archivo);
       return lista_canciones;
     }
-
+    
+    // Rellenar los datos de la cancion
     strcpy(nueva->id, campos[0]);
     strcpy(nueva->titulo, campos[4]);
-    nueva->artistas = split_string(campos[2], ";");
+    nueva->artistas = split_string(campos[2], ";"); // En caso de ser varios artistas los separa con un ;
     strcpy(nueva->album, campos[3]);
     strcpy(nueva->genero, campos[20]);
-    nueva->tempo = atof(campos[18]);
+    nueva->tempo = atof(campos[18]); 
 
-    list_pushBack(lista_canciones, nueva);
+    list_pushBack(lista_canciones, nueva); // Agregar la cancion a la lista
     k++;
   }
 
@@ -72,7 +73,7 @@ void menuPrincipal() {
   printf("5: Salir\n");
 }
 
-void mostrar_cancion(cancion *c) {
+void mostrar_cancion(cancion *c) { // Función que usaremos para optimizar el código
   printf("\nID: %s", c->id);
   printf("\nTitulo: %s", c->titulo);
   printf("\nArtistas: ");
@@ -107,7 +108,8 @@ void buscar_por_genero(List *lista) {
     char genero_busqueda[100];
     strcpy(genero_cancion, c->genero);
     strcpy(genero_busqueda, genero);
-        
+    
+    // Convertir a minúsculas para comparación
     for(int i = 0; genero_cancion[i]; i++) genero_cancion[i] = tolower(genero_cancion[i]);
     for(int i = 0; genero_busqueda[i]; i++) genero_busqueda[i] = tolower(genero_busqueda[i]);
         
@@ -116,7 +118,7 @@ void buscar_por_genero(List *lista) {
       encontradas++;
       contador++;
 
-      // Pausa cada 5 canciones
+      // Pausa cada 5 canciones para no saturar la pantalla
       if (contador % 5 == 0) {
         printf("\nPresione 's' para ver mas resultados o cualquier tecla para volver al menu...");
         scanf(" %c", &opcion);
@@ -174,16 +176,16 @@ void buscar_por_artista(List *lista) {
         encontradas++;
         contador++;
 
-        // Pausa cada 5 canciones
+        // Pausa cada 5 canciones para no saturar la pantalla
         if (contador % 5 == 0) {
-          printf("\nPresione 's' para ver más resultados o cualquier tecla para volver al menú...");
+          printf("\nPresione 's' para ver más resultados o cualquier tecla para volver al menu...");
           scanf(" %c", &opcion);
           if (tolower((unsigned char)opcion) != 's') {
             presioneTeclaParaContinuar();
             return;
           }
           limpiarPantalla();
-          printf("Resultados para artista: %s (continuación)\n", artista);
+          printf("Resultados para artista: %s (continuacion)\n", artista);
           puts("========================================");
         }
         break; // Salir del bucle de artistas si ya encontramos coincidencia
@@ -207,11 +209,11 @@ void buscar_por_tempo(List *lista) {
     presioneTeclaParaContinuar();
     return;
 }
-
+  // Opciones de tempo para el usuario
   puts("\nSeleccione categoria de tempo:");
   puts("1. Lentas (<80 BPM)");
   puts("2. Moderadas (80-120 BPM)");
-  puts("3. Rápidas (>120 BPM)");
+  puts("3. Rapidas (>120 BPM)");
   printf("Opcion: ");
 
   int opcion_tempo;
@@ -219,6 +221,7 @@ void buscar_por_tempo(List *lista) {
   float min, max;
   char *categoria;
 
+  // Definir los rangos de tempo según la opción seleccionada
   switch (opcion_tempo) {
     case 1:
         min = 0;
@@ -256,7 +259,7 @@ void buscar_por_tempo(List *lista) {
       encontradas++;
       contador++;
 
-      // Pausa cada 5 canciones
+      // Pausa cada 5 canciones para no saturar la pantalla
       if (contador % 5 == 0) {
         printf("\nPresione 's' para ver mas resultados o cualquier tecla para volver al menu...");
         scanf(" %c", &opcion);
@@ -293,7 +296,7 @@ void salir(List *canciones) {
   }
   printf("Saliendo del programa...\n");
   exit(0);
-}
+} // Se libera la memoria de las canciones y la lista y se cierra el programa
 
 int main() {
   char opcion;
